@@ -22,11 +22,11 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
     // struct のコメントを追加
     new_content = struct_re
         .replace_all(&new_content, |caps: &regex::Captures| {
-            let indent = &caps[1];
+            let indent = &caps[1].trim(); // インデントから改行を削除
             let original = &caps[2];
             let struct_name = &caps[3];
             format!(
-                "{}/// WIP_{}_struct_description{}{}",
+                "{}\n/// WIP_{}_struct_description{}{}",
                 indent, struct_name, indent, original
             )
         })
@@ -35,11 +35,11 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
     // enum のコメントを追加
     new_content = enum_re
         .replace_all(&new_content, |caps: &regex::Captures| {
-            let indent = &caps[1];
+            let indent = &caps[1].trim(); // インデントから改行を削除
             let original = &caps[2];
             let enum_name = &caps[3];
             format!(
-                "{}/// WIP_{}_enum_description\n{}{}",
+                "{}\n/// WIP_{}_enum_description\n{}{}",
                 indent, enum_name, indent, original
             )
         })
@@ -48,11 +48,11 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
     // trait のコメントを追加
     new_content = trait_re
         .replace_all(&new_content, |caps: &regex::Captures| {
-            let indent = &caps[1];
+            let indent = &caps[1].trim(); // インデントから改行を削除
             let original = &caps[2];
             let trait_name = &caps[3];
             format!(
-                "{}/// WIP_{}_trait_description{}{}",
+                "{}\n/// WIP_{}_trait_description\n{}{}",
                 indent, trait_name, indent, original
             )
         })
@@ -61,10 +61,10 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
     // 関数のコメントを追加
     new_content = function_re
         .replace_all(&new_content, |caps: &regex::Captures| {
-            let indent = &caps[1];
+            let indent = &caps[1].trim(); // インデントから改行を削除
             let function_name = &caps[2];
             format!(
-                "{}/// WIP_{}_function_description{}pub fn {}(",
+                "{}\n/// WIP_{}_function_description\n{}pub fn {}(",
                 indent, function_name, indent, function_name
             )
         })
