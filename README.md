@@ -22,4 +22,4 @@ gen_docs_template
 
 [Crates.io](https://crates.io/crates/gen_docs_template)
 
-[Documentation](https://docs.rs/typo_checker/0.0.1/gen_docs_template/)
+[Documentation](https://docs.rs/typo_checker/0.0.2/gen_docs_template/)
