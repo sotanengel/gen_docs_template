@@ -11,3 +11,4 @@ readme = "README.md"
 keywords=["docs.rs", "template"]
 
 [dependencies]
+regex = "1.11.1"
