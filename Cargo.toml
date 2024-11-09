@@ -8,7 +8,7 @@ license = "MIT"
 
 repository = "https://github.com/sotanengel/gen_docs_template"
 readme = "README.md"
-keywords=["docs.rs", "template"]
+keywords=["docs", "template"]
 
 [dependencies]
 regex = "1.11.1"
