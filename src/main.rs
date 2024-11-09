@@ -26,7 +26,7 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
             let original = &caps[2];
             let struct_name = &caps[3];
             format!(
-                "{}\n/// WIP_{}_struct_description{}{}",
+                "{}\n/// WIP_{}_struct_description\n{}{}",
                 indent, struct_name, indent, original
             )
         })
