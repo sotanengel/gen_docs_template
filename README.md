@@ -12,13 +12,16 @@ Run the following command:
 cargo install gen_docs_template
 ```
 
-## run
-
-It generates docs.rs template comments for all files in src.
-
-```
-gen_docs_template
-```
+<div style="display: flex; gap: 10px;">
+    <figure style="width: 300px; text-align: center; margin: 0;">
+        <img src="img/example-brefore.png" width="100%">
+        <figcaption>Before</figcaption>
+    </figure>
+    <figure style="width: 300px; text-align: center; margin: 0;">
+        <img src="img/example-after.png" width="100%">
+        <figcaption>After</figcaption>
+    </figure>
+</div>
 
 [Crates.io](https://crates.io/crates/gen_docs_template)
 
