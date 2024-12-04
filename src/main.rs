@@ -118,18 +118,44 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
     final_content
 }
 
+/// 履歴ファイルから既存の処理済みファイルのリストを取得する関数
+fn get_processed_files() -> io::Result<Vec<String>> {
+    let history_file = Path::new(".gen_doc_his");
+
+    // ファイルが存在しない場合、空のリストを返す
+    if !history_file.exists() {
+        return Ok(Vec::new());
+    }
+
+    // 履歴ファイルの内容を1行ずつ読み込む
+    let content = fs::read_to_string(history_file)?;
+    let lines: Vec<String> = content.lines().map(|line| line.to_string()).collect();
+
+    Ok(lines)
+}
+
 // ディレクトリ内のすべてのRustファイルにコメントを追加し、履歴ファイルにパスを記録
-fn process_directory(path: &Path) -> io::Result<()> {
+fn process_directory(path: &Path, processed_files: &[String]) -> io::Result<()> {
     for entry in fs::read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
 
         if path.is_dir() {
-            process_directory(&path)?;
+            process_directory(&path, processed_files)?;
         } else if path.extension().and_then(|ext| ext.to_str()) == Some("rs") {
+            let path_str = path.display().to_string();
+
+            // 処理済みファイルかどうかを確認
+            if processed_files.contains(&path_str) {
+                println!("Skipping already comments added file: {}", path_str);
+                continue;
+            }
+
+            // ファイル内容を読み込み、コメントを追加
             let file_content = fs::read_to_string(&path)?;
             let new_content = add_comments_to_struct_enum_trait(&file_content);
 
+            // ファイルに書き込み
             let mut file = fs::File::create(&path)?;
             file.write_all(new_content.as_bytes())?;
 
@@ -156,6 +182,9 @@ fn append_to_history(file_path: &Path) -> io::Result<()> {
 }
 
 fn main() -> io::Result<()> {
+    // 履歴ファイルから処理済みファイルリストを取得
+    let processed_files = get_processed_files()?;
+
     // コマンドライン引数を取得
     let args: Vec<String> = env::args().collect();
     let target_path: PathBuf = if args.len() > 2 && args[1] == "-path" {
@@ -166,7 +195,7 @@ fn main() -> io::Result<()> {
 
     // 指定されたディレクトリに対して処理を実行
     if target_path.exists() && target_path.is_dir() {
-        process_directory(&target_path)?;
+        process_directory(&target_path, &processed_files)?;
     } else {
         eprintln!("Error Folder not Found.. : {:?}", target_path);
         std::process::exit(1);
