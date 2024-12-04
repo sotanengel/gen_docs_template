@@ -1,6 +1,6 @@
 [package]
 name = "gen_docs_template"
-version = "0.0.5"
+version = "0.1.0"
 edition = "2021"
 
 description = "This CLI automatically creates templates of comment text required when generating docs.rs.(docs.rsの生成時に必要なコメント文のテンプレートを自動作成するCLIです。)"
