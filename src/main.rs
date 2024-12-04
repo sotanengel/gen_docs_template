@@ -1,6 +1,6 @@
 use regex::Regex;
 use std::env;
-use std::fs;
+use std::fs::{self, OpenOptions};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
@@ -118,7 +118,7 @@ fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
     final_content
 }
 
-// ディレクトリ内のすべてのRustファイルにコメントを追加
+// ディレクトリ内のすべてのRustファイルにコメントを追加し、履歴ファイルにパスを記録
 fn process_directory(path: &Path) -> io::Result<()> {
     for entry in fs::read_dir(path)? {
         let entry = entry?;
@@ -129,10 +129,29 @@ fn process_directory(path: &Path) -> io::Result<()> {
         } else if path.extension().and_then(|ext| ext.to_str()) == Some("rs") {
             let file_content = fs::read_to_string(&path)?;
             let new_content = add_comments_to_struct_enum_trait(&file_content);
+
             let mut file = fs::File::create(&path)?;
             file.write_all(new_content.as_bytes())?;
+
+            // 処理したファイルを履歴ファイルに追加
+            append_to_history(&path)?;
         }
     }
+    Ok(())
+}
+
+/// ファイルパスを `.gen_doc_his` に追記する関数
+fn append_to_history(file_path: &Path) -> io::Result<()> {
+    let history_file = Path::new(".gen_doc_his");
+
+    // ファイルが存在する場合は追記モード、存在しない場合は新規作成
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(history_file)?;
+
+    // ファイルパスを追記
+    writeln!(file, "{}", file_path.display())?;
     Ok(())
 }
 
