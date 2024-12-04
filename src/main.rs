@@ -1,7 +1,8 @@
 use regex::Regex;
+use std::env;
 use std::fs;
 use std::io::{self, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// ファイル内の `struct`、`enum`、`trait` および `pub fn` 宣言にコメントを追加する関数
 fn add_comments_to_struct_enum_trait(file_content: &str) -> String {
@@ -136,6 +137,21 @@ fn process_directory(path: &Path) -> io::Result<()> {
 }
 
 fn main() -> io::Result<()> {
-    let src_path = Path::new("src");
-    process_directory(src_path)
+    // コマンドライン引数を取得
+    let args: Vec<String> = env::args().collect();
+    let target_path: PathBuf = if args.len() > 2 && args[1] == "-path" {
+        PathBuf::from(&args[2])
+    } else {
+        PathBuf::from("src")
+    };
+
+    // 指定されたディレクトリに対して処理を実行
+    if target_path.exists() && target_path.is_dir() {
+        process_directory(&target_path)?;
+    } else {
+        eprintln!("Error Folder not Found.. : {:?}", target_path);
+        std::process::exit(1);
+    }
+
+    Ok(())
 }
