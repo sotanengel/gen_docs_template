@@ -169,12 +169,29 @@ fn process_directory(path: &Path, processed_files: &[String]) -> io::Result<()> 
 /// ファイルパスを `.gen_doc_his` に追記する関数
 fn append_to_history(file_path: &Path) -> io::Result<()> {
     let history_file = Path::new(".gen_doc_his");
+    let is_new_file = !history_file.exists();
 
     // ファイルが存在する場合は追記モード、存在しない場合は新規作成
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(history_file)?;
+
+    // 新規作成時のみ `.gitignore` に `.gen_doc_his` を追加
+    if is_new_file {
+        let gitignore_file = Path::new(".gitignore");
+        if gitignore_file.exists() {
+            // `.gitignore` の内容を確認
+            let content = fs::read_to_string(gitignore_file)?;
+            if !content.lines().any(|line| line.trim() == ".gen_doc_his") {
+                // `.gen_doc_his` がまだ存在しない場合のみ追加
+                let mut gitignore = OpenOptions::new().append(true).open(gitignore_file)?;
+                writeln!(gitignore, "\n# The history file for `gen_doc_his` command.")?;
+                writeln!(gitignore, "# If you want to know details, please access 'https://crates.io/crates/gen_docs_template'.")?;
+                writeln!(gitignore, ".gen_doc_his")?;
+            }
+        }
+    }
 
     // ファイルパスを追記
     writeln!(file, "{}", file_path.display())?;
