@@ -26,13 +26,12 @@ gen_docs_template
 
 [Crates.io](https://crates.io/crates/gen_docs_template)
 
-[Documentation](https://docs.rs/typo_checker/0.1.0/gen_docs_template/)
-
 # Arguments
 
 You can use these arguments.
 
-| Arguments | description                                                  | Example                      |
-| --------- | ------------------------------------------------------------ | ---------------------------- |
-| none      | Generates docs.rs template comments for all files in src.    | gen_docs_template            |
-| path      | Generates docs.rs template comments for all files in `hoge`. | gen_docs_template -path hoge |
+| Arguments | description                                                         | Example                      |
+| --------- | ------------------------------------------------------------------- | ---------------------------- |
+| none      | Generates docs.rs template comments for all files in src.           | gen_docs_template            |
+| -path     | Generates docs.rs template comments for all files in `hoge`.        | gen_docs_template -path hoge |
+| hard      | Execute comment granting ignoring the history of previous comments. | gen_docs_template hard       |
