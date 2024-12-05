@@ -198,17 +198,33 @@ fn append_to_history(file_path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-fn main() -> io::Result<()> {
-    // 履歴ファイルから処理済みファイルリストを取得
-    let processed_files = get_processed_files()?;
+fn remove_history_file() -> io::Result<()> {
+    let history_file = Path::new(".gen_doc_his");
+    if history_file.exists() {
+        fs::remove_file(history_file)?;
+        println!("Removed history file: {}", history_file.display());
+    }
+    Ok(())
+}
 
+fn main() -> io::Result<()> {
     // コマンドライン引数を取得
+    let args: Vec<String> = env::args().collect();
+
+    // `hard`オプションの処理
+    if args.iter().any(|arg| arg == "hard") {
+        remove_history_file()?;
+    }
+
     let args: Vec<String> = env::args().collect();
     let target_path: PathBuf = if args.len() > 2 && args[1] == "-path" {
         PathBuf::from(&args[2])
     } else {
         PathBuf::from("src")
     };
+
+    // 履歴ファイルから処理済みファイルリストを取得
+    let processed_files = get_processed_files()?;
 
     // 指定されたディレクトリに対して処理を実行
     if target_path.exists() && target_path.is_dir() {
